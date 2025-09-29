@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+    <h1>To Do</h1>
+</header>
+<main>
+    <div class="task-form-list-container">
+        <div class="task-form">
+            <div class="task-input-row">
+                <input type="text" class="task-input" placeholder="Add task...">
+                <button type= "button" class="add-btn" id="add-button" disabled>Add</button>
+            </div>
+
+            <div class="date-row">
+                <label for="task-date" class="date-label">Set Due Date:</label>
+                <input type="datetime-local" class="task-datetime"/>
+            </div>
+        </div>
+
+        <div class="task-list">
+            <ul id="task-item">
+                <li>
+                <div class="task">
+                    <button type="type" class="done-btn"></button>
+                    <div class="task-content">
+                        <span class="task-text">Hi</span>
+                        <label for="task-date" class="date-label">Due on:</label>
+                    </div>
+                    
+                    <div class="task-actions">
+                        <button type="button" class="edit-btn">Edit</button>
+                        <button type="button" class="delete-btn">Delete</button>
+                        
+                    </div>
+                </div>        
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+    <script src="script.js"></script>
+</body>
+</html>

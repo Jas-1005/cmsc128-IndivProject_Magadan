@@ -1,0 +1,210 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+    
+
+header{
+    background-color: rgb(226, 33, 97);
+    color: white ;
+    text-align: center;
+    padding: 1rem 0; 
+}
+
+header h1{
+    font-size: 2rem;
+    font-weight: bold;
+    outline : 1px solid white;
+}
+
+main{
+    min-height: 90vh;
+    border: 2px solid green;
+    background-color: #e9e7e7;
+}
+
+.main-content {
+    max-width: 700px;      /* Adjust as needed for your design */
+    width: 100%;
+    margin: 0 auto;
+}
+
+.task-form-list-container {
+    border: 3px solid red;
+    margin: 1rem auto 0 auto; /* small space from header */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;               /* less vertical space between form and list */        /* minimal side padding */
+}
+
+
+.task-form,
+.task-list {
+    width: 100%;
+    margin-bottom: 2rem;
+    /* Remove max-width and margin: 0 auto from these */
+}
+
+.task-form {
+    max-width: 1300px;
+    border : 3px solid violet;
+   /* Keeps it readable, but allows shrinking */
+    min-width: 0;          /* Allows flex children to shrink */
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 2rem;
+    margin: 0 auto;
+
+}
+
+.task-input-row {
+    border : 2px solid orangered;
+    display: flex;
+    gap: 0.1rem;
+    align-items: center;
+    min-width: 0;
+    margin-bottom: 0;    
+     
+}
+
+.task-input {
+    border : 2px solid blue;
+    flex: 1;          /* Allows input to shrink */
+    min-width: 0;          /* Prevents overflow */
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 90%;
+}
+
+.add-btn {
+    outline : 2px solid yellow;
+    flex-shrink: 1;        /* Allows button to shrink if needed */
+    padding: 0.5rem;
+    font-size: 1rem;
+    background: rgb(218, 199, 205);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: not-allowed;
+    transition: background 0.2s;
+    white-space: nowrap;
+    width: 5%;
+
+}
+
+.add-btn.enabled{
+    background:  rgb(226, 33, 97);
+    cursor: pointer;
+}
+
+.date-row {
+    border : 3px solid aquamarine;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;
+
+}
+
+.task-datetime {
+    flex-shrink: 0;
+    border : 2px solid skyblue;
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 200px;      /* Add this line */
+    max-width: 100%;   /* Optional: ensures it doesn't overflow */
+}
+
+
+.date-label {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 0.2rem;
+}
+
+.task{
+    border : 2px solid olive;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;       
+}
+
+
+.task-text {
+    border : 2px solid brown;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.task-list{
+    max-width: 1450px;     /* narrower than the list */
+    border : 2px solid red;
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0 auto;
+}
+
+#task-item{
+    border : 2px solid yellow;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.task-content {
+    border : 2px solid blue;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+
+.edit-btn,
+.delete-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    border : 2px solid green;
+    background: #ffd700;
+    color: #333;
+}
+
+.delete-btn {
+    border : 2px solid black;
+    background: #ff4d4d;
+    color: white;
+}
+
+.done-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #888;
+    background: #fff;
+    cursor: pointer;
+    margin-right: 12px;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+}
+
+.done-btn.done {
+    background: #4caf50;
+    border-color: #4caf50;
+}
+
+.done-btn.done::after {
+    content: '✔';
+    color: #fff;
+    font-size: 18px;
+    position: absolute;
+    left: 6px;
+    top: 2px;
+}
+ 
