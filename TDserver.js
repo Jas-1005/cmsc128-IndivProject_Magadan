@@ -19,12 +19,6 @@ function readTasks() {
     }
 }
 
-// Utility function to save tasks
-function saveTasks(tasks) {
-    fs.writeFileSync("tasks.json", JSON.stringify(tasks, null, 2));
-}
-
-
 //CREATE NEW
 app.post("/tasks", async (req, res) => {
   try {

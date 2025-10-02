@@ -27,13 +27,13 @@
                 <div id="task-priority">
                     <label id="priority-input">Priority: </label>
                     <select id="priority-select" name="example" Value="Low">
-                        <option value="low">Low</option>
-                        <option value="mid">Mid</option>
-                        <option value="high">High</option>
+                        <option value="low">LOW</option>
+                        <option value="mid">MID</option>
+                        <option value="high">HIGH</option>
                     </select>
                 </div>
                 <p id="date-preview" style="font-style: italic; color: gray;"></p>
-                <button type= "submit" id="add-button" disabled>Add</button>
+                <button type= "submit" id="add-button" disabled>ADD</button>
             </div>
         </form>
 
@@ -46,77 +46,79 @@
                     <option value="priority">Priority</option>
                 </select>
         </div>
-        
-        <div class="task-list">
-            <div id="task-column-header"> 
-                <div id="task-header-title">
-                    <h3>Task</h3>
+        <div id="main-content-container">
+            <div class="task-list">
+                <div id="task-column-header"> 
+                    <div id="task-header-title">
+                        <h3>TASK</h3>
+                    </div>
+                    <div id="task-header-date-added">
+                        <h3>DATE CREATED</h3>
+                    </div>
+                    <div id="task-header-duedate">
+                        <h3>DO ON</h3>
+                    </div>
+                    <div id="task-header-priority">
+                        <h3>PRIORITY</h3>
+                    </div>
+                    <div id="task-header-actions">
+                        <h3>ACTIONS</h3>
+                    </div>
                 </div>
-                <div id="task-header-date-added">
-                    <h3>Date Created</h3>
+                <div class="task-item-container">
+                    <!-- new elements/tasks will be added here, initially empty -->
                 </div>
-                <div id="task-header-duedate">
-                    <h3>Do on</h3>
-                </div>
-                <div id="task-header-priority">
-                    <h3>Priority</h3>
-                </div>
-                <div id="task-header-actions">
-                    <h3>Actions</h3>
-                </div>
+                
+                <div id="empty-modal-list" style="font-size: 48px; color: rgb(154, 151, 151);">✨ You're all caught up!</div>
             </div>
-            <div class="task-item-container">
-                <!-- new elements/tasks will be added here, initially empty -->
+
+            <div id="edit-modal">
+                <h3>EDIT TASK</h3>
+                <form id="edit-task-form">
+                    <div id="emodal-task-content">
+                        <label id="emodal-task-text">Task: </label>
+                        <input type="text" id="emodal-task-input" />
+                    </div>
+                    
+                    <div id="emodal-task-duedate">
+                        <label id="emodal-date-label" for="emodal-date-input">Due Date:</label>
+                        <input type="date" id="emodal-date-input"/>
+                    </div>
+
+
+                    <div id="emodal-task-duetime">
+                        <label id="emodal-time-label" for="emodal-time-input">Due Time:</label>
+                        <input type="time" id="emodal-time-input"/>
+                    </div>
+
+                    <div id="emodal-task-priority">
+                        <label id="emodal-priority-input" for="emodal-select">Priority:</label>
+                        <select id="emodal-select" name="example">
+                            <option value="low">LOW</option>
+                            <option value="mid">MID</option>
+                            <option value="high">HIGH</option>
+                        </select>
+                    </div>
+                    
+                    <div id="emodal-task-date-created">
+                        <h3>Created on: <span id="emodal-date-created-text"></span></h3>
+                    </div>
+
+                    <div id="emodal-actions">
+                        <div type= "button" class="save-edit-btn" id="emodal-save-edit-button">SAVE CHANGES</div>
+                        <div type= "button" class="cancel-edit-btn" id="emodal-cancel-button">CANCEL CHANGES</div>
+                    </div>
+                </form>
             </div>
-            
-            <div id="empty-modal-list" style="font-size: 48px; color: rgb(154, 151, 151);">✨ You're all caught up!</div>
         </div>
-    </div>
-
-    <div id="edit-modal">
-        <form id="edit-task-form">
-            <div id="emodal-task-content">
-                <label for="emodal-task-text">Task:</label>
-                <input type="text" id="emodal-task-text" />
-            </div>
-            
-            <div id="emodal-task-duedate">
-                <label id="emodal-date-label" for="emodal-date-input">Task Due Date:</label>
-                <input type="date" id="emodal-date-input"/>
-            </div>
-
-
-            <div id="emodal-task-duetime">
-                <label id="emodal-time-label" for="emodal-time-input">Task Due Time:</label>
-                <input type="time" id="emodal-time-input"/>
-            </div>
-
-            <div id="emodal-task-priority">
-                <label id="emodal-priority-input" for="emodal-select">Priority:</label>
-                <select id="emodal-select" name="example">
-                    <option value="low">Low</option>
-                    <option value="mid">Mid</option>
-                    <option value="high">High</option>
-                </select>
-            </div>
-            
-            <div id="emodal-task-date-created">
-                <h3>Task created on: <span id="emodal-date-created-text"></span></h3>
-            </div>
-
-            <div id="emodal-actions">
-                <div type= "button" class="save-edit-btn" id="emodal-save-edit-button">Save Changes</div>
-                <div type= "button" class="cancel-edit-btn" id="emodal-cancel-button">Cancel Changes</div>
-            </div>
-        </form>
     </div>
 </main>
     <div id="delete-modal" class="modal" style="display:none;">  <!--display: flex to show -->
         <div class="modal-content">
             <p>Are you sure you want to delete this task?</p>
             <div class="modal-actions">
-                <button id="confirm-delete-btn" class="delete-btn">Confirm</button>
-                <button id="cancel-delete-btn" class="cancel-btn">Cancel</button>
+                <button id="confirm-delete-btn" class="delete-btn">CONFIRM</button>
+                <button id="cancel-delete-btn" class="cancel-btn">CANCEL</button>
             </div>
         </div>
     </div>

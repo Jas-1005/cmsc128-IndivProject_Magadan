@@ -1,7 +1,7 @@
 * {
     margin: 0;
     box-sizing: border-box;
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 body {
@@ -13,6 +13,7 @@ body {
     
 header{
     display: flex;
+    width: 100%;
     background-color: rgb(226, 33, 97);
     color: white ;
     text-align: center;
@@ -32,28 +33,32 @@ main{
     display: flex;
     flex-direction: row;
     width: 100%;
-    border: 2px solid green;
+    /* border: 2px solid green; */
     background-color: white;
 }
 
 .task-form-list-container {
-    border: 3px solid red;
+    /* border: 3px solid red; */
     display: flex;
     flex: 1.5;
     flex-direction: column;
 
 }
 
-.task-form-list-container.disabled {
+.disabled {
     pointer-events: none;      /* disables all clicks / inputs */
     opacity: 0.5;              /* makes it look dimmed */
     user-select: none;          /* prevents text selection */
     cursor: none;
 }
 
+.disappear {
+    display: none !important;
+}
+
 
 .task-form {
-    border : 3px solid violet;
+    /* border : 3px solid violet; */
    /* Keeps it readable, but allows shrinking */          /* Allows flex children to shrink */
     display: flex;
     flex-direction: column;
@@ -62,21 +67,29 @@ main{
 }
 
 .task-input-row {
-    border : 2px solid orangered;
+    /* border : 2px solid orangered; */
     display: flex;
     flex-direction: row;  
     justify-content: space-between;
      
 }
 
+
 #task-input {
-    border : 2px solid blue;   
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    background: #fff0f5;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    /* border : 2px solid blue;    */
     font-size: 1rem;
     width: 500px;
+    height: 45px;
+    display: flex;
+    padding-left: 10px;
 }
 
 #add-button {
-    border : 2px solid green;   
+    border : 2px solid black;   
     justify-content: center;
     border-radius: 5px;
     display: flex;
@@ -93,8 +106,13 @@ main{
     color: white;
 }
 
+#main-content-container {
+    display: flex;
+    position: relative;
+}
+
 #task-info-container{
-    border:#ffd700;
+    /* border:#ffd700; */
     display: flex;
     flex-direction: row;
     gap: 50px;
@@ -104,7 +122,7 @@ main{
 }
 
 #task-priority{
-    border: 2px solid yellow;
+    /* border: 2px solid yellow; */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -142,7 +160,7 @@ main{
 }
 
 .date-row {
-    border : 3px solid aquamarine;
+    /* border : 3px solid aquamarine; */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -152,7 +170,7 @@ main{
 
 .task-datetime {
     flex-shrink: 0;
-    border : 2px solid skyblue;
+    /* border : 2px solid skyblue; */
     padding: 0.5rem;
     font-size: 1rem;
     width: 200px;      /* Add this line */
@@ -177,13 +195,13 @@ main{
 
 
 .task-text {
-    border : 2px solid brown;
+    /* border : 2px solid brown; */
     font-size: 1.1rem;
     margin-bottom: 4px;
 }
 
 #task-sorter{
-    border: 2px solid black;
+    /* border: 2px solid black; */
     display: flex;
     align-items: center;
     padding: 5px;
@@ -205,11 +223,11 @@ main{
 }
 
 .task-list{
-    border : 2px solid red;
+    /* border : 2px solid red; */
     list-style-type: none;
     display: flex;
     width: 100%;
-    height: 500px;
+    height: 490px;
     flex-direction: column;
 }
 
@@ -217,10 +235,13 @@ main{
     display: flex;
     flex-direction: row;
     width: 100%;
+    background-color: rgb(226, 33, 97);
 }
 
 
 #task-column-header > div{
+    border: 1px solid white;
+    color: white;
     display: flex;
     padding: 5px;
     height: 45px;
@@ -240,7 +261,7 @@ main{
 }
 
 #task-header-priority{
-    flex: 0.5;
+    flex: 0.8;
 }
 
 #task-header-actions{
@@ -254,6 +275,11 @@ main{
 }
 
 .task-item{
+    background: #fff0f5; /* very light pink for tasks */
+    border-radius: 6px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    transition: transform 0.1s;
     display: flex;
     height: 45px;
     width: 100%;
@@ -274,7 +300,7 @@ main{
 
 .task-item-content{
     justify-content: flex-start;
-    flex: 3.86;  
+    flex: 3.91;  
 }
 
 .task-item-date-added{
@@ -288,7 +314,7 @@ main{
 }
 
 .task-item-priority{
-    flex: 0.5;
+    flex: 0.8;
     justify-content: center;
 }
 
@@ -300,7 +326,7 @@ main{
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    border: 2px solid green;
+    /* border: 2px solid green; */
     
 }
 
@@ -314,24 +340,30 @@ main{
 
 #edit-modal{
     border: 3px solid blueviolet;
-    /* position: absolute; */
+    position: absolute;
+    right: 0;
     display: none;
     flex-direction: column;/*change to flex if edit btn clicked */
-    width: 750px;
-    height: 600px; 
-    top: 0;
-    right: 0;
+    width: 350px;
+    height: 490px;
     background-color: white;
     transition: all 0.3s;
     pointer-events: auto;
+    opacity: 1;
+    user-select: auto;
+    cursor: auto;
 }
 
-#emodal-close-button{
-    align-self: flex-end;
-    display: flex;
-    width:10%;
-    align-items: center;
-    justify-content: center;
+#edit-task-form  > div{
+    padding: 10px;
+}
+
+h3{
+    text-align: center;
+}
+
+#emodal-task-text{
+    font-weight: bold;
 }
 
 
@@ -439,6 +471,11 @@ main{
   margin-top: 1.5rem;
 }
 
+.done-task {
+    text-decoration: line-through;
+    color: rgba(100,100,100,0.5);
+}
+
 #emodal-cancel-button,
 .cancel-btn {
   background: #ccc;
@@ -471,10 +508,9 @@ main{
     border: 2px solid #888;
     background: #fff;
     cursor: pointer;
-    margin-right: 12px;
     transition: background 0.2s, border-color 0.2s;
-    position: relative;
     display: flex;
+    position: relative;
     justify-content: center;
     align-items: center;
 }
@@ -489,6 +525,7 @@ main{
     color: #fff;
     font-size: 18px;
     position: absolute;
+    
     left: 6px;
     top: 2px;
 }

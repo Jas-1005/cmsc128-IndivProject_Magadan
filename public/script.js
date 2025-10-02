@@ -32,7 +32,6 @@ function sortTasksBy(criteria) {
         console.log(`Task: ${task.dataset.taskText}, Date Created: ${task.dataset.dateCreated}, Due: ${task.dataset.dueDate} ${task.dataset.dueTime}, Priority: ${task.dataset.priority}`);
     });
 
-
     tasks.sort((a, b) => {
         if (criteria === "date added") {
             return new Date(a.dataset.dateCreated) - new Date(b.dataset.dateCreated);
@@ -42,7 +41,14 @@ function sortTasksBy(criteria) {
             return aDue - bDue;
         } else if (criteria === "priority") {
             const priorityOrder = { low: 1, mid: 2, high: 3 };
-            return priorityOrder[b.dataset.priority.toLowerCase()] - priorityOrder[a.dataset.priority];
+            const diff = priorityOrder[b.dataset.priority.toLowerCase()] - priorityOrder[a.dataset.priority.toLowerCase()];
+        
+            if (diff !== 0) return diff; // if   priorities are different, use priority
+            
+            // If priorities are the same, compare by due date
+            const aDue = a.dataset.dueDate ? new Date(`${a.dataset.dueDate}T${a.dataset.dueTime || "00:00"}`) : new Date(8640000000000000);
+            const bDue = b.dataset.dueDate ? new Date(`${b.dataset.dueDate}T${b.dataset.dueTime || "00:00"}`) : new Date(8640000000000000);
+            return aDue - bDue;
         }
     });
 
@@ -198,11 +204,11 @@ function addTaskToUI(taskToAdd){
 
     taskDiv.innerHTML = `
         <div class="done-action">
-            <button class="done-btn"></button>
+            <button class="done-btn`+ (taskToAdd.done ? " done" : "") +`"></button>
         </div>
 
         <div class="task-item-content">
-            <h4>${taskToAdd.task}</h4>
+            <h4 class="`+ (taskToAdd.done ? "done-task" : "") +`">${taskToAdd.task}</h4>
         </div>
         
         <div class="task-item-date-added">
@@ -217,8 +223,8 @@ function addTaskToUI(taskToAdd){
             <span>${taskToAdd.priority}</span>
         </div>
         <div class="task-item-actions">
-            <button class="edit-btn">Edit</button>
-            <button class="delete-btn">Delete</button>
+            <button class="edit-btn `+ (taskToAdd.done ? "disabled" : "") +`">EDIT</button>
+            <button class="delete-btn">DELETE</button>
         </div>
     `;
 
@@ -253,7 +259,7 @@ function addTaskToUI(taskToAdd){
 
     //EDIT MODAL
     const editModal = document.getElementById("edit-modal");
-    const editTaskInput = document.getElementById("emodal-task-text");
+    const editTaskInput = document.getElementById("emodal-task-input");
 
     //EDIT MODAL BUTTONS
     const saveChangesBtn = document.getElementById("emodal-save-edit-button");
@@ -328,16 +334,14 @@ function addTaskToUI(taskToAdd){
 
     //FOR EDIT BUTTON
     const taskFormListContainer = document.querySelector(".task-form-list-container");
-
-
-    let taskToEdit = null;
     
+    let taskToEdit = null
     editBtn.addEventListener("click", () => {
         
         editModal.style.display = "flex";
-        taskFormListContainer.classList.add("disabled");
-
-        taskToEdit = taskDiv;
+        document.getElementById("task-form").classList.add("disabled");
+        document.getElementById("task-sorter").classList.add("disabled");
+        document.querySelector(".task-list").classList.add("disabled");
 
         editTaskInput.value = taskDiv.dataset.taskText;
 
@@ -394,7 +398,9 @@ function addTaskToUI(taskToAdd){
 
         sortTasksBy(currentSort);
         editModal.style.display = "none";
-        taskFormListContainer.classList.remove("disabled");
+        document.getElementById("task-form").classList.remove("disabled");
+        document.getElementById("task-sorter").classList.remove("disabled");
+        document.querySelector(".task-list").classList.remove("disabled");
         taskToEdit = null; // clear reference
     });
     
@@ -402,7 +408,9 @@ function addTaskToUI(taskToAdd){
     
     cancelEmodalBtn.addEventListener("click", () => {
         editModal.style.display = "none";
-        taskFormListContainer.classList.remove("disabled");
+        document.getElementById("task-form").classList.remove("disabled");
+        document.getElementById("task-sorter").classList.remove("disabled");
+        document.querySelector(".task-list").classList.remove("disabled");
         taskToEdit = null;
     });
 
@@ -450,7 +458,7 @@ const toggleTaskDoneOnBackend = async (taskID, doneStatus) => {
 
 const addTaskToBackend = async (taskInfo) => {
   try {
-    const res = await fetch("/tasks/", {   // no need for full localhost URL
+    const res = await fetch("/tasks/", {  
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(taskInfo)
