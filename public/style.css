@@ -1,0 +1,494 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+    border: 1px solid red;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Microsoft To-Do style */
+    font-weight: 400;  /* normal text weight */
+    line-height: 1.5;
+    color: #333;
+}
+    
+header{
+    display: flex;
+    background-color: rgb(226, 33, 97);
+    color: white ;
+    text-align: center;
+    padding: 1rem 0; 
+}
+
+header h1{
+    display: flex;
+    text-align: left;
+    margin-left: 100px;
+    font-size: 2rem;
+    font-weight: bold;
+    /* outline : 1px solid white; */
+}
+
+main{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border: 2px solid green;
+    background-color: white;
+}
+
+.task-form-list-container {
+    border: 3px solid red;
+    display: flex;
+    flex: 1.5;
+    flex-direction: column;
+
+}
+
+.task-form-list-container.disabled {
+    pointer-events: none;      /* disables all clicks / inputs */
+    opacity: 0.5;              /* makes it look dimmed */
+    user-select: none;          /* prevents text selection */
+    cursor: none;
+}
+
+
+.task-form {
+    border : 3px solid violet;
+   /* Keeps it readable, but allows shrinking */          /* Allows flex children to shrink */
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+   
+}
+
+.task-input-row {
+    border : 2px solid orangered;
+    display: flex;
+    flex-direction: row;  
+    justify-content: space-between;
+     
+}
+
+#task-input {
+    border : 2px solid blue;   
+    font-size: 1rem;
+    width: 500px;
+}
+
+#add-button {
+    border : 2px solid green;   
+    justify-content: center;
+    border-radius: 5px;
+    display: flex;
+    width: 60px;
+    background: rgb(218, 199, 205);
+    color: black;
+    cursor: not-allowed;
+    transition: background 0.2s;
+}
+
+#add-button.enabled{
+    background:  rgb(226, 33, 97);
+    cursor: pointer;
+    color: white;
+}
+
+#task-info-container{
+    border:#ffd700;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    margin: 30px;
+}
+
+#task-priority{
+    border: 2px solid yellow;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#priority-input{
+    font-weight: bold;
+}
+
+#priority-select{
+    width: 75px;
+    height: 20px;
+    text-align: center;
+}
+
+#task-date-label{
+    font-weight: bold;
+    width: 120px;
+}
+
+#task-date-input{
+    width: 120px;
+    text-align: center;
+}
+
+#task-time-label{
+    display: none;
+    font-weight: bold;
+}
+
+#task-time-input{
+    display: none;
+    width: 75px;
+    text-align: center;
+}
+
+.date-row {
+    border : 3px solid aquamarine;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 300px;
+    
+}
+
+.task-datetime {
+    flex-shrink: 0;
+    border : 2px solid skyblue;
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 200px;      /* Add this line */
+    max-width: 100%;   /* Optional: ensures it doesn't overflow */
+}
+
+
+.date-label {
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 0.2rem;
+}
+
+.task{
+    border : 2px solid olive;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;       
+}
+
+
+.task-text {
+    border : 2px solid brown;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+#task-sorter{
+    border: 2px solid black;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    width: 220px;
+    align-self: flex-end ;
+}
+
+#task-sorter-input{
+    font-weight: bold;
+    width: 120px;
+    height: 28px;
+    text-align: center;
+}
+
+#sorter-select{
+    height: 20px;
+    text-align: center;
+    width: 100px;
+}
+
+.task-list{
+    border : 2px solid red;
+    list-style-type: none;
+    display: flex;
+    width: 100%;
+    height: 500px;
+    flex-direction: column;
+}
+
+#task-column-header{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+
+#task-column-header > div{
+    display: flex;
+    padding: 5px;
+    height: 45px;
+    justify-content: center;
+}
+
+#task-header-title{
+    flex: 4.17;  
+}
+
+#task-header-date-added{
+    flex: 1.5;
+}
+
+#task-header-duedate{
+    flex: 1.5;
+}
+
+#task-header-priority{
+    flex: 0.5;
+}
+
+#task-header-actions{
+    flex: 1.2;
+}
+
+.task-item-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.task-item{
+    display: flex;
+    height: 45px;
+    width: 100%;
+    align-items: center;
+    flex-direction: row;
+}
+
+.task-item > div {
+    display: flex;
+    height: 45px;
+    padding: 0 5px; 
+    align-items: center;
+}
+
+.done-action{
+    flex: 0.05;  
+}
+
+.task-item-content{
+    justify-content: flex-start;
+    flex: 3.86;  
+}
+
+.task-item-date-added{
+    flex: 1.5;
+    justify-content: center;
+}
+
+.task-item-duedate{
+    flex: 1.5;
+    justify-content: center;
+}
+
+.task-item-priority{
+    flex: 0.5;
+    justify-content: center;
+}
+
+.task-item-actions{
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    flex: 1.19;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid green;
+    
+}
+
+#empty-modal-list{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#edit-modal{
+    border: 3px solid blueviolet;
+    /* position: absolute; */
+    display: none;
+    flex-direction: column;/*change to flex if edit btn clicked */
+    width: 750px;
+    height: 600px; 
+    top: 0;
+    right: 0;
+    background-color: white;
+    transition: all 0.3s;
+    pointer-events: auto;
+}
+
+#emodal-close-button{
+    align-self: flex-end;
+    display: flex;
+    width:10%;
+    align-items: center;
+    justify-content: center;
+}
+
+
+#emodal-task-content{
+    display: flex;
+}
+#emodal-task-duedate{
+    gap: 5px;
+    display: flex;
+}
+#emodal-date-label{
+    font-weight: bold;
+}
+
+#emodal-task-duetime{
+    gap: 5px;
+    display: flex;
+}
+
+#emodal-time-label{
+    font-weight: bold;
+}
+
+#emodal-task-priority{
+    display: flex;
+    gap: 5px;
+}
+#emodal-priority-input{
+    font-weight: bold;
+}
+#emodal-task-date-created{
+    display: flex;
+}
+
+#emodal-delete-button{
+    display: flex;
+    align-self: flex-end;
+}
+
+/* #emodal-save-edit-button{
+    display: flex;
+    align-self: center;
+    text-align: center;
+    justify-content: center;
+    background-color: aquamarine;
+} */
+
+#emodal-actions{
+    gap: 1rem;
+    display: flex;
+    justify-content: right;
+    margin-top: 1.5 rem;
+    flex-direction: row;
+    margin-top: 1.5rem;
+}
+
+#task-column-header > div{
+    display: flex;
+    padding: 5px;
+    height: 45px;
+    justify-content: center;
+}
+
+#emodal-save-edit-button,
+.edit-btn,
+.delete-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+#emodal-save-edit-button,
+.edit-btn {
+    border : 2px solid green;
+    background: aquamarine;
+    color: #333;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem 2.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+#emodal-cancel-button,
+.cancel-btn {
+  background: #ccc;
+  color: #333;
+  border: black;
+  display: flex;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+}
+
+.delete-btn {
+    border : 2px solid black;
+    background: #ff4d4d;
+    color: white;
+}
+
+.done-action {
+    display: flex;
+    justify-content: center; /* horizontal center */
+    align-items: center;     /* vertical center */
+    height: 50px;            /* make sure parent has some height */
+}
+
+.done-btn {
+    margin-right: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #888;
+    background: #fff;
+    cursor: pointer;
+    margin-right: 12px;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.done-btn.done {
+    background: #4caf50;
+    border-color: #4caf50;
+}
+
+.done-btn.done::after {
+    content: '✔';
+    color: #fff;
+    font-size: 18px;
+    position: absolute;
+    left: 6px;
+    top: 2px;
+}

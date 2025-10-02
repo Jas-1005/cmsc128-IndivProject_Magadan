@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+</head>
+<body>
+<header class="header">
+    <h1>To Do</h1>
+</header>
+<main>
+    <div class="task-form-list-container">
+        <form id="task-form">
+            <div id="task-info-container">
+                <input type="text" id="task-input" placeholder="Add task...">
+                <div class="date-row">
+                    <label id="task-date-label">Due on </label>
+                    <input type="date" id="task-date-input" min=""/>
+
+                    <label id="task-time-label">at</label>
+                    <input type="time" id="task-time-input"/>
+                </div>
+                <div id="task-priority">
+                    <label id="priority-input">Priority: </label>
+                    <select id="priority-select" name="example" Value="Low">
+                        <option value="low">Low</option>
+                        <option value="mid">Mid</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <p id="date-preview" style="font-style: italic; color: gray;"></p>
+                <button type= "submit" id="add-button" disabled>Add</button>
+            </div>
+        </form>
+
+
+        <div id="task-sorter">
+            <label id="task-sorter-input">Sort tasks by: </label>
+                <select id="sorter-select" name="example" Value="Date Added">
+                    <option value="date added">Date Created</option>
+                    <option value="due date">Due Date</option>
+                    <option value="priority">Priority</option>
+                </select>
+        </div>
+        
+        <div class="task-list">
+            <div id="task-column-header"> 
+                <div id="task-header-title">
+                    <h3>Task</h3>
+                </div>
+                <div id="task-header-date-added">
+                    <h3>Date Created</h3>
+                </div>
+                <div id="task-header-duedate">
+                    <h3>Do on</h3>
+                </div>
+                <div id="task-header-priority">
+                    <h3>Priority</h3>
+                </div>
+                <div id="task-header-actions">
+                    <h3>Actions</h3>
+                </div>
+            </div>
+            <div class="task-item-container">
+                <!-- new elements/tasks will be added here, initially empty -->
+            </div>
+            
+            <div id="empty-modal-list" style="font-size: 48px; color: rgb(154, 151, 151);">✨ You're all caught up!</div>
+        </div>
+    </div>
+
+    <div id="edit-modal">
+        <form id="edit-task-form">
+            <div id="emodal-task-content">
+                <label for="emodal-task-text">Task:</label>
+                <input type="text" id="emodal-task-text" />
+            </div>
+            
+            <div id="emodal-task-duedate">
+                <label id="emodal-date-label" for="emodal-date-input">Task Due Date:</label>
+                <input type="date" id="emodal-date-input"/>
+            </div>
+
+
+            <div id="emodal-task-duetime">
+                <label id="emodal-time-label" for="emodal-time-input">Task Due Time:</label>
+                <input type="time" id="emodal-time-input"/>
+            </div>
+
+            <div id="emodal-task-priority">
+                <label id="emodal-priority-input" for="emodal-select">Priority:</label>
+                <select id="emodal-select" name="example">
+                    <option value="low">Low</option>
+                    <option value="mid">Mid</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            
+            <div id="emodal-task-date-created">
+                <h3>Task created on: <span id="emodal-date-created-text"></span></h3>
+            </div>
+
+            <div id="emodal-actions">
+                <div type= "button" class="save-edit-btn" id="emodal-save-edit-button">Save Changes</div>
+                <div type= "button" class="cancel-edit-btn" id="emodal-cancel-button">Cancel Changes</div>
+            </div>
+        </form>
+    </div>
+</main>
+    <div id="delete-modal" class="modal" style="display:none;">  <!--display: flex to show -->
+        <div class="modal-content">
+            <p>Are you sure you want to delete this task?</p>
+            <div class="modal-actions">
+                <button id="confirm-delete-btn" class="delete-btn">Confirm</button>
+                <button id="cancel-delete-btn" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+                
