@@ -1,0 +1,133 @@
+<!-- TO DO: INTEGRATE ON SAME FOLDER WITH TO DO LIST -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body>
+<header class="header">
+    <h1>To Do</h1>
+</header>
+<main>
+    <div id="login-container">
+        <div id="login-form-label">
+            <h3>LOGIN</h3>
+        </div>
+        
+        <form id="login-form">
+            <div id="login-email-container">
+                <input type="email" id="login-email-input" placeholder="Email" required>
+            </div>
+            
+            <div id="password-container">
+                <input type="password" id="login-password-input" name = "password" placeholder="Password" maxlength="10" required>
+                <div class="toggle-password"><i class="fa-solid fa-eye"></i></div>
+            </div>
+            <div id="forget-password">
+                <span id="forget-password-text"class="link">Forgot password?</span>
+            </div>
+            <div id="login-btn-div"> 
+                <button type= "submit" id="login-btn" disabled>LOG IN</button>
+            </div>
+            <div id="signup-link">
+                <div id="go-to-signup-label"> Don't have an account yet? </div>
+                <div id="go-to-signup" class="link"> Sign up here </div>
+            </div>
+        </form>
+    </div> 
+
+    <div id="signup-container">
+        <div id="signup-form-label">
+            <h3>CREATE AN ACCOUNT</h3>
+        </div>
+        
+        <form id="signup-form">
+            <div id="firebase-auth-error-message-signup" class="error-message"></div> <!-- ADD THIS -->
+            <div id="signup-name-container">
+                <input type="text" id="signup-name-input" placeholder="Name">
+            </div>
+            
+            <div id="signup-email-container">
+                <input type="email" id="signup-email-input" placeholder="Email" required>
+            </div>
+            
+            <div id="password-container">
+                <input type="password" id="signup-password-input" name = "password" placeholder="Password" maxlength="10" required>
+                <div class="toggle-password"><i class="fa-solid fa-eye"></i></div>
+            </div>
+            <div id="signup-btn-div"> 
+                <button type= "submit" id="signup-btn" disabled>SIGN UP</button>
+            </div>
+            <div id="login-link">
+                <div id="go-to-login-label"> Already have an account? </div>
+                <div id="go-to-login" class="link"> Log in here </div>
+            </div>
+        </form>
+    </div> 
+    <div id="forget-password-container">
+        <div id="forget-password-form-label">
+            <h3>ACCOUNT RECOVERY</h3>
+        </div>
+        
+        <form id="forget-password-form">
+            <div id="firebase-auth-error-message-forgot" class="error-message"></div> <!-- ADD THIS -->
+            <div id="firebase-auth-success-message-forgot" class="success-message"></div> <!-- ADD THIS -->
+            <div id="forget-email-container">
+                <input type="text" id="forget-email-input" placeholder="Enter registered email" required>
+            </div>
+            <div id="receive-otp-btn-div"> 
+                <button id="receive-otp-btn">RECEIVE EMAIL RECOVERY</button>
+            </div>
+            <div id="forget-pw-login-link">
+                <div id="go-to-login-label"> Remembered your password? </div>
+                <div id="forget-pw-go-to-login" class="link"> Log in here </div>
+            </div>
+        </form>
+    </div> 
+    <div id = "password-reset-container">
+        <form id="password-reset-form">
+            <input type="password" id="current-password-input" name = "password" placeholder="Enter current password" maxlength="10" required>
+            <input type="password" id="new-password-input" name = "password" placeholder="Enter new password" maxlength="10" required>
+            <button type= "button" id="save-password-changes-btn">SAVE NEW PASSWORD</button>
+            <button type= "button" id="cancel-password-changes-btn">CANCEL CHANGES</button>
+        </form>
+    </div>    
+    <div id="edit-user-profile-form-container">
+        <div id="edit-user-profile-form-label">
+            <h3>USER PROFILE</h3>
+        </div>
+        <form id="edit-user-form">
+            <div id="edit-name-container">
+                <label>Username: </label>
+                <input type="text" id="edit-name-input">
+            </div>
+            
+            <div id="edit-email-container">
+                <label>Email: </label>
+                <input type="text" id="edit-email-input">
+            </div>
+            <!-- <div id="edit-password-container">
+                <input type="text" id="edit-password-input" placeholder="Edit password">
+            </div> -->
+            <div id = "user-profile-actions">
+                <button type= "button" id="save-changes-btn">SAVE CHANGES</button>
+                <button type= "button" id="cancel-changes-btn">CANCEL CHANGES</button>
+            </div>
+        </form>
+        <div id="logout-btn-div">
+            <button type="button" id="logout-btn">LOG OUT</button>
+        </div>
+    </div> 
+</main>  
+    <script type="module" src="login.js"></script>
+</body>
+</html>
+
+
+                

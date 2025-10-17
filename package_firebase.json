@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "firebase": "^12.4.0"
+  },
+  "name": "cmsc128_indivproject_magadan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
