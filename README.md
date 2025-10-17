@@ -28,4 +28,15 @@ III. DATABASE
     Currently using JSON files for local storage. Will be reconfigured to use Firebase Firestore for a fully functional, document-based solution with queries, indexing, and real-time synchronization.
 
 
-TO-DO :ACCOUNT CREATIONS, LOGIN, FIREBASE RECONFIGURATION
+LAB 2: TO-DO :ACCOUNT CREATIONS, LOGIN, FIREBASE RECONFIGURATION
+Account creations and logins use firebase auth and database.
+Firebase Auth - can only store email and password
+Firebase Database - where username is stored
+Fire onAuthStatusChanged is used for user status persistence
+Lpgin does not redirect yet but only uses flex and non display. 
+Only hiding containers.
+Updates are real-time but slower, as well as login and signup. 
+Alerts by html will be changed to modal
+Login and signup will be optimized by refactoring login.js
+
+TO-D0 : INTEGRATE TO DO DATABASE AND USER ACCOUNTS DATABASE
