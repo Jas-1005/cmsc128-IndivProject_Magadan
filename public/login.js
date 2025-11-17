@@ -1,42 +1,14 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getAuth,
-         createUserWithEmailAndPassword,
+import { auth, userDB, taskDB } from "./firebase.js";
+import { createUserWithEmailAndPassword,
          signInWithEmailAndPassword,
          onAuthStateChanged,
          signOut, 
-         updateProfile,
-         sendPasswordResetEmail,
+         updateProfile
         } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
-// import { initializeApp } from "firebase/app";
-// import { getAuth } from "firebase/auth";
-// import { getAnalytics } from "firebase/analytics";
-// import { getDatabase } from "firebase/database";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-
-const firebaseConfig = {
-            apiKey: "AIzaSyDX2PT9q_Yx1PdPooSnKM2-K5cw4Z-1OnE",
-            authDomain: "cmsc-128-fullstack.firebaseapp.com",
-            projectId: "cmsc-128-fullstack",
-            storageBucket: "cmsc-128-fullstack.firebasestorage.app",
-            messagingSenderId: "726754132879",
-            appId: "1:726754132879:web:9d28c52f5b9bdc13be01fa",
-            measurementId: "G-CFCF9BFCMS"
-        };
-
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
-
-console.log("Firebase initialized:", app);
-
+import { ref, set, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+// import { unsubscribeAllTasks } from "./index.js";
+import { collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 const toggleButtons = document.querySelectorAll('.toggle-password');
 
@@ -52,8 +24,7 @@ toggleButtons.forEach(toggle => {
     });
 });
 
-
-// FOR LOGIN 
+// FOR LOGIN  
 const loginEmailInput = document.getElementById("login-email-input");
 const loginPasswordInput = document.getElementById("login-password-input");
 const loginBtn = document.getElementById("login-btn");
@@ -87,83 +58,93 @@ function updateSignUpButton () {
     }
 }
 
-//FOR LOG OUT
-const userProfileBox = document.getElementById("edit-user-profile-form-container");
-const logOutBtn = document.getElementById("logout-btn");
+// VALIDATE USER ACCESS AND CREATE PERSONAL LIST
+async function validatePersonalList(user){
+    const userSnap = await (get(ref(userDB, `users/${user.uid}`)));
+    const userName = userSnap.val().userName;
 
-logOutBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    const currentUser = auth.currentUser;
+    const listCol = collection(taskDB, "toDoList");
+    const personalQuery = query(listCol, where("owner", "==", user.uid), where("type","==","personal"));
+    const querySnapshot = await getDocs(personalQuery);
 
-    const uid = currentUser.uid;
-    
-    try{
-        const userRecord = await get(ref(database, `users/${uid}`));
-        const curUserData = userRecord.val(); 
-        const name = curUserData.userName;
-        
-        await signOut(auth);
-        alert(`${name} logged out.`);
-        
-        checkUserAuthStatus();
-
-    } catch (error){
-        console.error(error);
+    if (querySnapshot.empty){
+        const newPersonalList = await addDoc(listCol, {
+            owner: user.uid,
+            type: "personal",
+            member: [],
+            dateCreated: new Date().toISOString(),
+            name: `${userName}'s Personal TDL`
+        });
+        console.log("Created personal list:", newPersonalList.id);
+        return newPersonalList.id;
+    } else {
+        const existingList = querySnapshot.docs[0];
+        console.log("Personal list exists:", existingList.id);
+        return existingList.id;
     }
-    
-});
+}
 
+//CREATE COLLAB LIST
+async function createCollabList(ownerUser, collabListName, emailsArray) {
+    try {
+        // Convert emails to UIDs
+        const memberUIDs = [];
+
+        for (const email of emailsArray) {
+            const userQuery = query(collection(userDB, "users"), where("userEmail", "==", email));
+            const querySnapshot = await getDocs(userQuery);
+
+            if (!querySnapshot.empty) {
+                const userDoc = querySnapshot.docs[0];
+                memberUIDs.push(userDoc.id);
+            } else {
+                console.warn(`User not found: ${email}`);
+            }
+        }
+
+        // Create collab list in Firestore
+        const newCollabList = await addDoc(collection(taskDB, "toDoList"), {
+            owner: ownerUser.uid,
+            type: "collab",
+            member: memberUIDs,
+            dateCreated: new Date().toISOString(),
+            name: collabListName
+        });
+
+        console.log("Collab list created:", newCollabList.id);
+        return newCollabList.id;
+
+    } catch (error) {
+        console.error("Error creating collab list:", error);
+        throw error;
+    }
+}
 
 // CHECK IF USER IS LOGGED IN OR LOGGED OUT
 async function checkUserAuthStatus() { 
     onAuthStateChanged(auth, async (user) => {
         if (user){
-            console.log(`${user.displayName || user.email }`+" is logged in.");
+            const userSnap = await (get(ref(userDB, `users/${user.uid}`)));
+            const userName = userSnap.val().userName;
+
+            console.log(`${userName}`+" is logged in.");
+            // loadTasksFromDB(user.uid);
+            if (!window.location.href.includes("index.html")) {
+                window.location.replace("index.html");
+            }
             // alert("Login successfully! Welcome, " + (user.displayName||user.email));
-            loginForm.reset();
-            updateLogInButton();
+            
             // await user.reload();
-            await displayCurrentUserInfo(user);
+            // await displayCurrentUserInfo(user);
         } else {
             // console.log(`${user.displayName || user.email}`+" is logged out.");
             // console.log("log out here");
-            userProfileBox.style.display = "none";
+            // userProfileBox.style.display = "none";
             signupBox.style.display = "none";
             loginBox.style.display = "flex";
         }
-
     });
 }
-
-
-//FOR UPDATING USER PROFILE
-const curUserWelcomeMessage = document.getElementById("edit-user-profile-form-label");
-const curUserNameInput = document.getElementById("edit-name-input"); 
-const curUserEmailInput = document.getElementById("edit-email-input");
-const saveEditBtn = document.getElementById("save-changes-btn");
-const cancelEditBtn = document.getElementById("cancel-changes-btn");
-
-async function displayCurrentUserInfo(user) {
-    loginBox.style.display = "none";
-    signupBox.style.display = "none";
-    userProfileBox.style.display ="flex";
-
-    try {
-        const userRecord = await get(ref(database, `users/${user.uid}`));
-        const curUserData = userRecord.exists() ? userRecord.val() : null;
-        const name = user.displayName || curUserData?.userName;
-
-        curUserWelcomeMessage.textContent = `Hello, ${name}!`;
-        curUserNameInput.value = name;
-        curUserEmailInput.value = user.email;
-
-    } catch (error){
-        console.log(error);
-    }
-
-
-}
-
 
 //SWITCH BETWEEN LOGIN AND SIGNUP BOXES
 const loginBox = document.getElementById("login-container");
@@ -201,16 +182,18 @@ function processUserLogin(){
         try {
             const userLoginInfo = await signInWithEmailAndPassword(auth, userEmail, userPassword);
             const user = userLoginInfo.user;
-            const userRecord = await get(ref(database, `users/${user.uid}`));
+            const userRecord = await get(ref(userDB, `users/${user.uid}`));
             const curUserData = userRecord.exists() ? userRecord.val() : null;
-            const name = user.displayName || curUserData?.userName;
+            const name = curUserData.userName;
             
             alert(`${name} log in successful!`);
-            checkUserAuthStatus();
+            loginForm.reset(); 
+            updateLogInButton();
+            window.location.replace("index.html");
 
         
         } catch (error){
-            if (error.code === "auth/user-not-found" || "auth/invalid-credential") {
+            if (error.code === "auth/user-not-found" || error.code === "auth/invalid-credential") {
             alert("No account found with that email.");
             } else if (error.code === "auth/wrong-password") {
             alert("Incorrect password. Please try again.");
@@ -246,18 +229,21 @@ function processUserSignup(){
             const user = userSignUpInfo.user;
             
             
-            await set(ref(database, `users/${user.uid}`),{
+            await set(ref(userDB, `users/${user.uid}`),{
                 userName,
                 userEmail,
                 createdAt : new Date().toISOString()
             });
             
-            await updateProfile(user, {displayName : userName});
+            // await updateProfile(user, {displayName : userName});
+            // console.log("User name: ", user.displayName);
             
             alert("Account created successfully! Logged in automatically!");
             signUpForm.reset();
-            updateSignUpButton();  
-            await displayCurrentUserInfo(user);        
+            updateSignUpButton();
+            await validatePersonalList(user);
+            window.location.replace("index.html");  
+            // await displayCurrentUserInfo(user);        
 
         } catch (error){
            if (error.code === "auth/email-already-in-use") {

@@ -1,3 +1,121 @@
+// Import the functions you need from the SDKs you need
+import { taskDB } from './firebase.js';
+import { collection, doc, getDocs, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+const userTasks = collection(taskDB, "tasks");
+//BACKEND OPERATIONS
+const getTasks = async () => {
+    try{
+        const snapshot = await getDocs(userTasks); 
+        return snapshot.docs.map(task => ({ id: task.id, ...task.data()}));
+    } catch (err) {
+        console.error("Error fetching tasks:", err);
+        return [];
+    }
+};
+
+const addTask = async (taskText, dueDate, dueTime, priority) => {
+    try{
+        const taskDocToAdd = {
+            taskContent: taskText,
+            dueDate: dueDate || null,
+            dueTime: dueTime || null,
+            priority: priority || "low",
+            done: false,
+            dateCreated: new Date().toISOString()
+        }
+        const taskRef = await addDoc(userTasks, taskDocToAdd); 
+        return { id: taskRef.id, ...taskDocToAdd };
+
+    } catch (err) {
+        console.error("Error adding task:", err);
+        return null;
+    }
+}; 
+
+const deleteTask = async (taskID) => {
+    try{
+        const taskDocToDelete = doc(taskDB, "tasks", taskID);
+        await deleteDoc(taskDocToDelete);
+        return true;
+
+    } catch (err) {
+        console.error("Error deleting task:", err);
+        return false;
+    }
+};
+
+const updateTask = async (taskID, taskUpdatedFields) => {
+    try{
+        const taskDocToEdit= doc(taskDB, "tasks", taskID);
+        await updateDoc(taskDocToEdit, taskUpdatedFields);
+        return true;
+
+    } catch (err) {
+        console.error("Error updating task:", err);
+        return false;
+    }
+};
+
+//BACKEND INTEGRATION
+const loadTasksFromBackend = async () => {
+    try {
+        const userTasks = await getTasks();
+        // Add each task to the UI
+        userTasks.forEach(task => addTaskToUI(task));
+        toggleEmptyModal(); // update empty message if needed
+    } catch (err) {
+        console.error("Error loading tasks:", err);
+    }
+};
+
+const toggleTaskDoneOnBackend = async (taskID, doneStatus) => {
+    try {
+        await updateTask(taskID, {done: doneStatus});
+        return {id: taskID, done:doneStatus};
+    } catch (err) {
+        console.error("Failed to update done status:", err);
+    }
+};
+
+const addTaskToBackend = async (taskInfo) => {
+  try {
+    const newTask = await addTask(
+        taskInfo.taskText, 
+        taskInfo.dueDate, 
+        taskInfo.dueTime, 
+        taskInfo.priority
+    );
+    return newTask;
+
+  } catch (err) {
+    console.error("Error adding task:", err);
+    return null;
+  }
+};
+
+const deleteTaskOnBackend = async (taskID) => {
+    try {
+        const deletedTask =  await deleteTask(taskID);
+        return deleteTask;
+    } catch (err) {
+        console.error("Delete failed:", err);
+        return false;
+    }
+};
+
+const updateTaskOnBackend = async (taskID, updatedInfo) => {
+    try {
+        const res = await fetch(`/tasks/${taskID}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedInfo)
+        });
+    } catch (err) {
+        console.error("Update failed:", err);
+    }
+};
+
 // INPUTS 
 const addTaskTextInput = document.getElementById("task-input");
 const addTaskDueDateInput = document.getElementById("task-date-input");
@@ -5,6 +123,7 @@ const addTaskDueTimeInput = document.getElementById("task-time-input");
 const addTaskDueTimeLabel = document.getElementById("task-time-label")
 const taskPriorityInput = document.getElementById("priority-select");
 const sorterSelect = document.getElementById("sorter-select");
+
 
 // BUTTONS
 const addBtn = document.getElementById("add-button");
@@ -14,6 +133,10 @@ const taskForm = document.getElementById("task-form");
 const emptyModal = document.getElementById("empty-modal-list");
 const taskContainer = document.querySelector(".task-item-container");
 
+//USER AVATAR
+const username = "Jasmine Magadan"; // get this from your login/user data
+const userAvatar = document.getElementById("user-profile-avatar");
+userAvatar.textContent = username.charAt(0).toUpperCase();
 
 let currentSort = "date added";
 
@@ -418,100 +541,6 @@ function addTaskToUI(taskToAdd){
 
 
 }
-
-//BACKEND INTEGRATION
-const loadTasksFromBackend = async () => {
-    try {
-        const res = await fetch("/tasks/");
-        if (!res.ok) throw new Error("Failed to fetch tasks");
-
-        const tasks = await res.json();
-
-        // Add each task to the UI
-        tasks.forEach(task => {
-            addTaskToUI(task); // reuse your existing function
-        });
-
-        toggleEmptyModal(); // update empty message if needed
-    } catch (err) {
-        console.error("Error loading tasks:", err);
-    }
-}
-
-const toggleTaskDoneOnBackend = async (taskID, doneStatus) => {
-    try {
-        const res = await fetch(`/tasks/${taskID}`, {
-            method: "PATCH", // we only update one property
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ done: doneStatus })
-        });
-
-        if (!res.ok) throw new Error("Failed to update task");
-
-        const updatedTask = await res.json();
-        console.log("Task updated:", updatedTask);
-        return updatedTask;
-    } catch (err) {
-        console.error("Failed to update done status:", err);
-    }
-};
-
-const addTaskToBackend = async (taskInfo) => {
-  try {
-    const res = await fetch("/tasks/", {  
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(taskInfo)
-    });
-
-    if (!res.ok) throw new Error("Failed to add task");
-
-    const newTask = await res.json();
-    return newTask;
-
-  } catch (err) {
-    console.error("Error adding task:", err);
-    return null;
-  }
-};
-
-const deleteTaskOnBackend = async (taskID) => {
-    try {
-        const res = await fetch(`/tasks/${taskID}`, {
-            method: "DELETE"
-        });
-
-        if (!res.ok) {
-            const error = await res.json();
-            throw new Error(error.error || "Failed to delete task");
-        }
-
-        const data = await res.json();
-        console.log("Task deleted from backend:", data);
-        return data.task; // returns the deleted task info
-    } catch (err) {
-        console.error("Delete failed:", err);
-    }
-}
-
-const updateTaskOnBackend = async (taskID, updatedInfo) => {
-    try {
-        const res = await fetch(`/tasks/${taskID}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedInfo)
-        });
-
-        if (!res.ok) throw new Error("Failed to update task");
-
-        const updatedTask = await res.json();
-        console.log("Task updated on backend:", updatedTask);
-        return updatedTask;
-    } catch (err) {
-        console.error("Update failed:", err);
-    }
-};
-
 
 
 
