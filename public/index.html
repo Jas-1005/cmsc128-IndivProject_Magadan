@@ -13,7 +13,6 @@
     <h1>To Do</h1>
     <div class="user-profile" id="user-profile-avatar"></div>
     <div id="header-actions">
-        <button id="check-collab-space-button">Check Collab Spaces</button>
         <button id="logout-button">Log out</button>
     </div> 
 </header>
@@ -126,56 +125,6 @@
                 <button id="cancel-delete-btn" class="cancel-btn">CANCEL</button>
             </div>
         </div>
-    </div>
-    <div class="overlay" id="collab-overlay">
-        <div id="collab-modal" >
-            <div id="collab-space-modal-content">
-                <h4 id="collab-modal-identifier"></h4>
-                <ul id="collab-spaces-list">
-                </ul>
-            </div>
-            <div id="collab-modal-create-section">
-                <button id="create-collab-space-button">Create Collab Space</button>
-            </div>
-            
-            <div id="create-collab-modal">
-                <h3>Create Collab Space</h3>
-                <div id="create-collab-modal-space-name-input">
-                    <input type="text" id="create-space-name" placeholder="Enter collab space name" required />
-                </div>
-                <div id="collab-modal-invite-section">
-                    <input type="email" id="collab-modal-invite-email-input" placeholder="Enter email to invite" required/>
-                    <button id="collab-modal-invite-button">Invite</button>
-                </div>
-                <div id="create-collab-modal-actions">
-                    <button id="create-collab-confirm-button">Create</button>
-                    <button id="create-collab-cancel-button">Cancel</button>
-                </div>
-            </div>
-
-            <div>
-                <button id="close-collab-modal-button">Close</button>
-            </div>
-        </div>
-    </div>
-    <div id="space-details-modal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="space-name">Space Name</h3>
-            <button id ="close-space-details">X</button>
-        </div> 
-        <div id="space-members">
-            <h4>Members:</h4>
-            <ul id="members-list"></ul>
-        </div>
-
-        <div id="invite-member-section">
-            <input type="email" id="invite-member-email" placeholder="Invite member email">
-            <button id="invite-member-btn">Invite</button>
-        </div>
-
-        <button id="edit-space-name-btn">Edit Name</button>
-        <button id="save-space-changes-btn">Save</button>
     </div>
     <script type="module" src="index.js"></script>
 </body>

@@ -3,8 +3,6 @@ import { auth, userDB, taskDB } from "./firebase.js";
 import { createUserWithEmailAndPassword,
          signInWithEmailAndPassword,
          onAuthStateChanged,
-         signOut, 
-         updateProfile
         } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { ref, set, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
 // import { unsubscribeAllTasks } from "./index.js";
@@ -64,14 +62,12 @@ async function validatePersonalList(user){
     const userName = userSnap.val().userName;
 
     const listCol = collection(taskDB, "toDoList");
-    const personalQuery = query(listCol, where("owner", "==", user.uid), where("type","==","personal"));
+    const personalQuery = query(listCol, where("owner", "==", user.uid));
     const querySnapshot = await getDocs(personalQuery);
 
     if (querySnapshot.empty){
         const newPersonalList = await addDoc(listCol, {
             owner: user.uid,
-            type: "personal",
-            member: [],
             dateCreated: new Date().toISOString(),
             name: `${userName}'s Personal TDL`
         });
@@ -84,42 +80,6 @@ async function validatePersonalList(user){
     }
 }
 
-//CREATE COLLAB LIST
-async function createCollabList(ownerUser, collabListName, emailsArray) {
-    try {
-        // Convert emails to UIDs
-        const memberUIDs = [];
-
-        for (const email of emailsArray) {
-            const userQuery = query(collection(userDB, "users"), where("userEmail", "==", email));
-            const querySnapshot = await getDocs(userQuery);
-
-            if (!querySnapshot.empty) {
-                const userDoc = querySnapshot.docs[0];
-                memberUIDs.push(userDoc.id);
-            } else {
-                console.warn(`User not found: ${email}`);
-            }
-        }
-
-        // Create collab list in Firestore
-        const newCollabList = await addDoc(collection(taskDB, "toDoList"), {
-            owner: ownerUser.uid,
-            type: "collab",
-            member: memberUIDs,
-            dateCreated: new Date().toISOString(),
-            name: collabListName
-        });
-
-        console.log("Collab list created:", newCollabList.id);
-        return newCollabList.id;
-
-    } catch (error) {
-        console.error("Error creating collab list:", error);
-        throw error;
-    }
-}
-
 // CHECK IF USER IS LOGGED IN OR LOGGED OUT
 async function checkUserAuthStatus() { 
     onAuthStateChanged(auth, async (user) => {
@@ -128,18 +88,10 @@ async function checkUserAuthStatus() {
             const userName = userSnap.val().userName;
 
             console.log(`${userName}`+" is logged in.");
-            // loadTasksFromDB(user.uid);
             if (!window.location.href.includes("index.html")) {
                 window.location.replace("index.html");
             }
-            // alert("Login successfully! Welcome, " + (user.displayName||user.email));
-            
-            // await user.reload();
-            // await displayCurrentUserInfo(user);
         } else {
-            // console.log(`${user.displayName || user.email}`+" is logged out.");
-            // console.log("log out here");
-            // userProfileBox.style.display = "none";
             signupBox.style.display = "none";
             loginBox.style.display = "flex";
         }
@@ -156,8 +108,6 @@ goToLogin.addEventListener("click", () => {
     forgotPWContainer.style.display = "none";
     loginBox.style.display = "flex";
     signupBox.style.display = "none";
-
-    
 });
 
 goToSignup.addEventListener("click", () => {
@@ -234,9 +184,6 @@ function processUserSignup(){
                 userEmail,
                 createdAt : new Date().toISOString()
             });
-            
-            // await updateProfile(user, {displayName : userName});
-            // console.log("User name: ", user.displayName);
             
             alert("Account created successfully! Logged in automatically!");
             signUpForm.reset();

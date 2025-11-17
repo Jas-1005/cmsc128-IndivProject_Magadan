@@ -2,7 +2,7 @@
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { auth, taskDB, userDB } from './firebase.js';
 import { ref, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
-import { collection, arrayUnion, doc, getDocs, onSnapshot, query, where, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { collection, doc, getDocs, onSnapshot, query, where, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 // DOM REFERENCES
 // LOCAL STATES OF DATA BEFORE UPDATE
 let userTasks = null;
@@ -18,191 +18,25 @@ const addTaskDueTimeInput = document.getElementById("task-time-input");
 const addTaskDueTimeLabel = document.getElementById("task-time-label")
 const taskPriorityInput = document.getElementById("priority-select");
 const sorterSelect = document.getElementById("sorter-select");
-const collabSpaceNameInput = document.getElementById("create-space-name");
-const collabSpaceEmailInput = document.getElementById("collab-modal-invite-email-input");
 
 
 // BUTTONS
 const addBtn = document.getElementById("add-button");
 const logOutBtn = document.getElementById("logout-button");
-const collabModalBtn = document.getElementById("check-collab-space-button"); // or a separate button
-const closeCollabBtn = document.getElementById("close-collab-modal-button");
-const createCollabBtn = document.getElementById("create-collab-space-button");
-const inviteCollabEmailBtn = document.getElementById("collab-modal-invite-section button");
-const cancelCreateCollabBtn = document.getElementById("create-collab-cancel-button");
-const confirmCreateCollabBtn = document.getElementById("create-collab-confirm-button");
 
 
 // CONTAINERS
 const taskForm = document.getElementById("task-form");
 const emptyModal = document.getElementById("empty-modal-list");
 const taskContainer = document.querySelector(".task-item-container");
-const collabOverlay = document.getElementById("collab-overlay");
-const createCollabModal = document.getElementById("create-collab-modal");
-
-//USER AVATAR
-const userAvatarBtn = document.getElementById("user-profile-avatar");
-const collabModalIdentifier = document.getElementById("collab-modal-identifier");
-const collabModal =  document.getElementById("collab-modal");
-const collabSpacesList = document.getElementById("collab-spaces-list");
 const mainContainer = document.getElementById("main-container");
 const headerContainer = document.getElementById("header-container");
 
-//SPACE DETAILS MODALS
-const spaceDetailsModal = document.getElementById("space-details-modal");
-const closeSpaceDetailsBtn = document.getElementById("close-space-details");
-const spaceNameEl = document.getElementById("space-name");
-const membersListEl = document.getElementById("members-list");
-const inviteEmailInput = document.getElementById("invite-member-email");
-const inviteMemberBtn = document.getElementById("invite-member-btn");
-const editSpaceNameBtn = document.getElementById("edit-space-name-btn");
-const saveSpaceChangesBtn = document.getElementById("save-space-changes-btn");
+//USER AVATAR
+const userAvatarBtn = document.getElementById("user-profile-avatar");
 
 mainContainer.style.display = "none";
 headerContainer.style.display = "none";
-
-inviteMemberBtn.disabled = !inviteEmailInput.value.trim();
-inviteEmailInput.addEventListener("input", () => {
-    inviteMemberBtn.disabled = !inviteEmailInput.value.trim();
-});
-
-collabModalBtn.addEventListener("click", () => {
-    mainContainer.classList.add("disabled");
-    collabOverlay.style.display = "flex";
-
-    createCollabBtn.addEventListener("click", () => {
-        createCollabModal.style.display = "flex";
-    })
-
-    cancelCreateCollabBtn.addEventListener("click", () =>{
-        createCollabModal.style.display = "none";
-    })
-
-});
-
-confirmCreateCollabBtn.addEventListener("click", async () => {
-    const collabSpaceName = collabSpaceNameInput.value.trim();
-    const collabInviteEmail = collabSpaceEmailInput.value.trim();
-
-    try {
-        const newCollabSpaceRef = await addDoc(collection(taskDB, "toDoList"), {
-            name: collabSpaceName,
-            owner: auth.currentUser.uid,
-            type: "collab",
-            member: [collabInviteEmail],
-            dateCreated: new Date().toISOString()
-        });
-
-        addToCollabSpace(collabSpaceName, newCollabSpaceRef.id, "collab");
-        console.log("Created new space with ID:", newCollabSpaceRef.id);
-
-        createCollabModal.style.display = "none";
-        collabOverlay.style.display = "none";
-        mainContainer.classList.remove("disabled");
-        inviteEmailInput.value = "";
-    } catch (err) {
-        console.error("Error creating collab space:", err);
-    }
-
-
-});
-
-closeCollabBtn.addEventListener("click", () => {
-    collabOverlay.style.display = "none";
-    createCollabModal.style.display = "none";
-    mainContainer.classList.remove("disabled");
-});
-
-
-let currentSpaceID = null;
-// Open modal and populate details
-async function openSpaceDetailsModal(spaceID) {
-    currentSpaceID = spaceID;
-
-    try {
-        const spaceDoc = await getDoc(doc(taskDB, "toDoList", spaceID));
-        if (!spaceDoc.exists()) return;
-
-        const spaceData = spaceDoc.data();
-        spaceNameEl.textContent = spaceData.name || "Unnamed Space";
-
-        // Populate members list
-        membersListEl.innerHTML = "";
-        spaceData.member.forEach(email => {
-            const li = document.createElement("li");
-            li.textContent = email;
-            membersListEl.appendChild(li);
-        });
-
-        // Show modal
-        spaceDetailsModal.style.display = "flex";
-
-    } catch (err) {
-        console.error("Failed to load space details:", err);
-    }
-}
-
-// Close modal
-closeSpaceDetailsBtn.addEventListener("click", () => {
-    spaceDetailsModal.style.display = "none";
-    currentSpaceID = null;
-});
-
-// Invite member
-inviteMemberBtn.addEventListener("click", async () => {
-    
-    const email = inviteEmailInput.value.trim();
-    if (!email || !currentSpaceID) return;
-
-    const existingMembers = Array.from(membersListEl.children).map(li => li.textContent);
-    if (existingMembers.includes(email)) {
-        alert("This user is already in the space.");
-        return;
-    }
-
-    try {
-        const spaceRef = doc(taskDB, "toDoList", currentSpaceID);
-        await updateDoc(spaceRef, {
-            member: arrayUnion(email)
-        });
-
-        // Update UI
-        const li = document.createElement("li");
-        li.textContent = email;
-        membersListEl.appendChild(li);
-
-        inviteEmailInput.value = "";
-        inviteMemberBtn.disabled = true; 
-    } catch (err) {
-        console.error("Failed to invite member:", err);
-    }
-});
-
-// Edit space name
-editSpaceNameBtn.addEventListener("click", () => {
-    const newName = prompt("Enter new space name:", spaceNameEl.textContent);
-    if (newName && currentSpaceID) {
-        spaceNameEl.textContent = newName;
-    }
-});
-
-// Save space changes
-saveSpaceChangesBtn.addEventListener("click", async () => {
-    if (!currentSpaceID) return;
-
-    try {
-        const spaceRef = doc(taskDB, "toDoList", currentSpaceID);
-        await updateDoc(spaceRef, {
-            name: spaceNameEl.textContent
-        });
-
-        spaceDetailsModal.style.display = "none";
-        currentSpaceID = null;
-
-    } catch (err) {
-        console.error("Failed to save space changes:", err);
-    }
-});
 
 // BACKEND FUNCTIONS
 onAuthStateChanged(auth, async (user) => {
@@ -228,26 +62,18 @@ const loadTasksFromDB = async (userID) => {
     unsubscribeAllTasks.forEach(unsub => unsub());
     unsubscribeAllTasks = [];
 
-    // queries
+    // personal list
     const userTDListQuery = query (collection(taskDB, "toDoList"), where("owner","==", userID));
-    const userIsAMemberQuery = query (collection(taskDB, "toDoList"), where("member","array-contains", userID));
-
-    const [ownerSnap, memberSnap] = await Promise.all([getDocs(userTDListQuery), getDocs(userIsAMemberQuery)]);
-    
-    const userAllTDLists = [...ownerSnap.docs, ...memberSnap.docs];
+    const ownerSnap = await getDocs(userTDListQuery);
+    const userAllTDLists = ownerSnap.docs;
 
     if (userAllTDLists.length === 0){
-        // If the user has no lists yet, create a personal to-do list so
-        // `userTasks` will be properly initialized instead of staying null.
         try {
-            // Attempt to get the user's display name from Realtime DB (if available)
             const userRecord = await get(ref(userDB, `users/${userID}`));
             const userName = userRecord && userRecord.exists() && userRecord.val().userName ? userRecord.val().userName : "User";
 
             const newListRef = await addDoc(collection(taskDB, "toDoList"), {
                 owner: userID,
-                type: "personal",
-                member: [],
                 dateCreated: new Date().toISOString(),
                 name: `${userName}'s Personal TDL`
             });
@@ -268,47 +94,21 @@ const loadTasksFromDB = async (userID) => {
             toggleEmptyModal();
             return;
         }
+    } else {
+          currentTDListID = userAllTDLists[0].id;
     }
-    // Populate the collab modal list (personal lists first)
-    collabSpacesList.innerHTML = "";
-    const personalLists = userAllTDLists.filter(d => d.data().type === "personal");
-    const otherLists = userAllTDLists.filter(d => d.data().type !== "personal");
-    const orderedLists = [...personalLists, ...otherLists];
 
-    orderedLists.forEach(listDoc => {
-        addToCollabSpace(listDoc.data().name, listDoc.id, listDoc.data().type);
-    });
-
-    // Select the personal list by default if present, otherwise first
-    const defaultList = personalLists[0] || orderedLists[0];
-    if (defaultList) {
-        attachListListener(defaultList.id);
-    }
-};
-
-
-// Attach snapshot listener for a specific to-do list (used when switching lists)
-function attachListListener(listID){
-    // clear previous listeners
-    unsubscribeAllTasks.forEach(unsub => unsub());
-    unsubscribeAllTasks = [];
-
-    currentTDListID = listID;
     userTasks = collection(taskDB, "toDoList", currentTDListID, "tasks");
-
     const unsubscribe = onSnapshot(userTasks, snapshot => {
         taskContainer.innerHTML = "";
-        snapshot.docs.forEach(taskDoc => addTaskToUI({id: taskDoc.id, ...taskDoc.data(), listID: currentTDListID }));
+        snapshot.docs.forEach(taskDoc => 
+            addTaskToUI({id: taskDoc.id, ...taskDoc.data(), listID: currentTDListID})
+        );
         toggleEmptyModal();
         sortTasksBy(currentSort);
-        // update active state in collab modal
-        Array.from(collabSpacesList.children).forEach(li => {
-            li.classList.toggle("active", li.dataset.listID === currentTDListID);
-        });
     });
     unsubscribeAllTasks.push(unsubscribe);
-}
-
+};
 
 //FOR LOG OUT
 //const userProfileBox = document.getElementById("edit-user-profile-form-container");
@@ -345,34 +145,8 @@ const toggleTaskDoneOnDB = async (taskID, doneStatus) => {
     }
 };
 
-function addToCollabSpace(listName, listID){
-    const li = document.createElement("li");
-    li.textContent = listName;
-    li.dataset.listID = listID;
-    li.classList.add("collab-space-item"); 
-
-    if (listID === currentTDListID) li.classList.add("active");
-
-    li.addEventListener("click", async () => {
-        if(currentTDListID === listID) return;
-        currentTDListID = listID;
-        openSpaceDetailsModal(listID);
-        attachListListener(currentTDListID);
-         // switch current list
-        Array.from(collabSpacesList.children).forEach(item => {
-            item.classList.toggle("active", item.dataset.listID === currentTDListID);
-        });
-        // await loadTasksFromDB(user.uid); // reload tasks
-        collabModal.style.display = "none"; // close modal
-        mainContainer.classList.remove("disabled");
-    });
-    collabSpacesList.appendChild(li);
-}
-
 function setUserAvatar(userName){
-    console.log("user name: ", userName);
     userAvatarBtn.textContent = userName.charAt(0).toUpperCase();
-    collabModalIdentifier.textContent = `${userName}'s Space`;
 }
 
 sorterSelect.addEventListener("change", () => {
