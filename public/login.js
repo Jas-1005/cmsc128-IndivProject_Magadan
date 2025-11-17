@@ -105,7 +105,6 @@ const goToLogin = document.getElementById("go-to-login");
 const goToSignup = document.getElementById("go-to-signup");
 
 goToLogin.addEventListener("click", () => {
-    forgotPWContainer.style.display = "none";
     loginBox.style.display = "flex";
     signupBox.style.display = "none";
 });
@@ -200,17 +199,6 @@ function processUserSignup(){
         
     });
 }
-
-//FORGET PASSWORD
-const forgotPWBtn = document.getElementById("forget-password-text");
-const forgotPWContainer = document.getElementById("forget-password-container");
-
-forgotPWBtn.addEventListener("click", () => {
-    loginBox.style.display = "none";
-    forgotPWContainer.style.display = "flex";
-});
-
-
 
 loginEmailInput.addEventListener("input", updateLogInButton);
 loginPasswordInput.addEventListener("input", updateLogInButton);
