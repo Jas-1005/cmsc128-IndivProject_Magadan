@@ -124,9 +124,6 @@ function processUserLogin(){
         
         const userEmail = loginEmailInput.value.trim();
         const userPassword = loginPasswordInput.value.trim();
-        
-        console.log("User email: ", userEmail);
-        console.log("User password: ", userPassword);
 
         loginBtn.disabled = true;
         try {
@@ -169,10 +166,6 @@ function processUserSignup(){
         const userName = signupNameInput.value.trim();
         const userEmail = signupEmailInput.value.trim();
         const userPassword = signupPasswordInput.value.trim();
-        
-        console.log("User name: ", userName);
-        console.log("User email: ", userEmail);
-        console.log("User password: ", userPassword);
         
         try{
             const userSignUpInfo = await createUserWithEmailAndPassword(auth, userEmail, userPassword);
