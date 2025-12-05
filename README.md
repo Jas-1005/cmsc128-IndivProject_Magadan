@@ -24,4 +24,4 @@ Updates are real-time but slower, as well as login and signup.
 Alerts by html will be changed to modal
 Login and signup will be optimized by refactoring login.js
 
-
+Link to web app: https://cmsc-128-fullstack.web.app
