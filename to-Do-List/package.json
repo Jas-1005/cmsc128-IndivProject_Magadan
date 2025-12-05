@@ -1,0 +1,15 @@
+{
+  "name": "to-do-list-package",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "prebuild": "node scripts/generate-firebase.js",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.2.4"
+  }
+}
