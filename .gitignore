@@ -69,3 +69,4 @@ node_modules/
 .dataconnect
 
 node_modules/
+firebase_config.js
