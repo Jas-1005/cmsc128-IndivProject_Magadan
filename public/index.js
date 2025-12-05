@@ -1,6 +1,6 @@
 // FIRESTORE
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { auth, DB} from '../firebase.js';
+import { auth, DB} from './firebase.js';
 import { collection, doc, getDocs, getDoc, onSnapshot, query, where, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 // DOM REFERENCES
 
