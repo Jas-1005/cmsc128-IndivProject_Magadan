@@ -22,9 +22,18 @@ const toggleButtons = document.querySelectorAll('.toggle-password');
 
 //GET LOGIN INPUT
 const loginForm = document.getElementById("login-form");
+const loginEmailInput = document.getElementById("login-email-input");
+const loginPasswordInput = document.getElementById("login-password-input");
+const loginBtn = document.getElementById("login-btn");
 
 //GET SIGNUP INPUT
 const signUpForm = document.getElementById("signup-form");
+const signupNameInput = document.getElementById("signup-name-input");
+const signupEmailInput = document.getElementById("signup-email-input");
+const signupPasswordInput = document.getElementById("signup-password-input");
+const signupConfirmPasswordInput = document.getElementById("signup-confirm-password-input");
+const signupBtn = document.getElementById("signup-btn");
+
 
 const params = new URLSearchParams(window.location.search);
 if (params.get("msg") === "loggedout") {
@@ -63,10 +72,6 @@ toggleButtons.forEach(toggle => {
     });
 });
 
-// FOR LOGIN  
-const loginEmailInput = document.getElementById("login-email-input");
-const loginPasswordInput = document.getElementById("login-password-input");
-const loginBtn = document.getElementById("login-btn");
 
 function updateLogInButton () {
     if (loginEmailInput.value.trim() !== "" && loginPasswordInput.value.trim() !== ""){
@@ -78,12 +83,6 @@ function updateLogInButton () {
     }
 }
 
-
-//FOR SIGNUP
-const signupNameInput = document.getElementById("signup-name-input");
-const signupEmailInput = document.getElementById("signup-email-input");
-const signupPasswordInput = document.getElementById("signup-password-input");
-const signupBtn = document.getElementById("signup-btn");
 
 function updateSignUpButton () {
     if (signupNameInput.value.trim() !== "" && signupEmailInput.value.trim() !== "" && signupPasswordInput.value.trim() !== ""){
@@ -211,8 +210,16 @@ function processUserSignup(){
         const userName = signupNameInput.value.trim();
         const userEmail = signupEmailInput.value.trim();
         const userPassword = signupPasswordInput.value.trim();
-     
+        const userConfirmPassword = signupConfirmPasswordInput.value.trim();
+        
+        if (userPassword !== userConfirmPassword){
+                showToast("Passwords do not match. Please check your password inputs carefully.", "error");
+                return;
+        }
+
+
         try{
+            
             const userSignUpInfo = await createUserWithEmailAndPassword(auth, userEmail, userPassword);
             const user = userSignUpInfo.user;
             

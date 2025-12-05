@@ -103,7 +103,7 @@ input{
     border: solid 2px #333;
 }
 
-#password-container{
+#password-container, #confirm-password-container{
     background: white;
     border: solid 2px #333;
 }
@@ -270,7 +270,7 @@ input{
     display: flex;
     width: 100%;
 }
-#signup-password-input{
+#signup-password-input, #signup-confirm-password-input {
     display: flex;
     width: 100%;
 }
