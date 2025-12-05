@@ -11,9 +11,8 @@
 <body>
 <header id="header-container">
     <h1>To Do</h1>
-    <div class="user-profile" id="user-profile-avatar"></div>
     <div id="header-actions">
-        <button id="logout-button">Log out</button>
+        <button id="logout-button">LOG OUT</button>
     </div> 
 </header>
 <main id="main-container">
@@ -41,15 +40,20 @@
             </div>
         </form>
 
-
-        <div id="task-sorter">
-            <label id="task-sorter-input">Sort tasks by: </label>
-                <select id="sorter-select" name="example" Value="Date Added">
-                    <option value="date added">Date Created</option>
-                    <option value="due date">Due Date</option>
-                    <option value="priority">Priority</option>
-                </select>
+        <div id="identifier-sorter-row">
+            <div id="to-do-list-identifier">
+                <p id="avatar-full-name"></p>
+            </div>
+            <div id="task-sorter">
+                <label id="task-sorter-input">Sort tasks by: </label>
+                    <select id="sorter-select" name="example" Value="Date Added">
+                        <option value="date added">Date Created</option>
+                        <option value="due date">Due Date</option>
+                        <option value="priority">Priority</option>
+                    </select>
+            </div>
         </div>
+
         <div id="main-content-container">
             <div class="task-list">
                 <div id="task-column-header"> 

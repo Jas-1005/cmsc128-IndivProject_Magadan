@@ -1,14 +1,21 @@
 // FIRESTORE
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { auth, taskDB, userDB } from './firebase.js';
-import { ref, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
-import { collection, doc, getDocs, onSnapshot, query, where, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { auth, DB} from './firebase.js';
+import { collection, doc, getDocs, getDoc, onSnapshot, query, where, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 // DOM REFERENCES
+
+//DATABASES
+const usersDB = collection(DB, 'users');
+const toDoListsDB = collection(DB, 'toDoList');
+
+
 // LOCAL STATES OF DATA BEFORE UPDATE
 let userTasks = null;
 let currentTDListID = null;
 let unsubscribeAllTasks = [];
 let currentSort = "date added";
+let currentUserName = "";
+let currentTDListIdentifier = "";
 // let currentUser = null;
 
 // INPUTS 
@@ -33,7 +40,8 @@ const mainContainer = document.getElementById("main-container");
 const headerContainer = document.getElementById("header-container");
 
 //USER AVATAR
-const userAvatarBtn = document.getElementById("user-profile-avatar");
+const userAvatarBox = document.getElementById("avatar-full-name");
+
 
 mainContainer.style.display = "none";
 headerContainer.style.display = "none";
@@ -41,11 +49,9 @@ headerContainer.style.display = "none";
 // BACKEND FUNCTIONS
 onAuthStateChanged(auth, async (user) => {
         if (user){
-            const userSnap = await get(ref(userDB,`users/${user.uid}`));
-            const userName = userSnap.val().userName;
-
-            setUserAvatar(userName);
-            await loadTasksFromDB(user.uid);
+            currentTDListIdentifier = await fetchCurrentUserName(user);
+            setUserAvatar(currentTDListIdentifier);
+            await loadTasksFromDB(user);
             processUserAddTask();
             updateAddButton();
 
@@ -57,29 +63,44 @@ onAuthStateChanged(auth, async (user) => {
         }
 });
 
-const loadTasksFromDB = async (userID) => {
+
+async function fetchCurrentUserName(user) {
+    const userDocRef = doc(usersDB, user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if(userDocSnap.exists()){
+        const userData = userDocSnap.data();
+        currentUserName = userData.name;
+    }
+
+    return currentUserName;
+
+}
+
+const loadTasksFromDB = async (user) => {
     //clear previous lsteners
     unsubscribeAllTasks.forEach(unsub => unsub());
     unsubscribeAllTasks = [];
 
     // personal list
-    const userTDListQuery = query (collection(taskDB, "toDoList"), where("owner","==", userID));
+    const userTDListQuery = query (toDoListsDB, where("owner","==", user.uid));
     const ownerSnap = await getDocs(userTDListQuery);
     const userAllTDLists = ownerSnap.docs;
 
     if (userAllTDLists.length === 0){
         try {
-            const userRecord = await get(ref(userDB, `users/${userID}`));
-            const userName = userRecord && userRecord.exists() && userRecord.val().userName ? userRecord.val().userName : "User";
+            currentUserName = await fetchCurrentUserName(user);
 
-            const newListRef = await addDoc(collection(taskDB, "toDoList"), {
-                owner: userID,
+            const newListToAdd = {
+                owner: user.uid,
                 dateCreated: new Date().toISOString(),
-                name: `${userName}'s Personal TDL`
-            });
+                identifier: `${currentUserName}'s Personal TDL`
+            };
+
+            const newListRef = await addDoc(toDoListsDB, newListToAdd);
 
             currentTDListID = newListRef.id;
-            userTasks = collection(taskDB, "toDoList", currentTDListID, "tasks");
+            userTasks = collection(toDoListsDB, currentTDListID, "tasks");
 
             const unsubscribe = onSnapshot(userTasks, snapshot => {
                 taskContainer.innerHTML = "";
@@ -98,7 +119,7 @@ const loadTasksFromDB = async (userID) => {
           currentTDListID = userAllTDLists[0].id;
     }
 
-    userTasks = collection(taskDB, "toDoList", currentTDListID, "tasks");
+    userTasks = collection(toDoListsDB, currentTDListID, "tasks");
     const unsubscribe = onSnapshot(userTasks, snapshot => {
         taskContainer.innerHTML = "";
         snapshot.docs.forEach(taskDoc => 
@@ -119,34 +140,32 @@ logOutBtn.addEventListener("click", async (e) => {
         unsubscribeAllTasks = [];
 
         const currentUser = auth.currentUser;
-
-        const userRecord = await get(ref(userDB, `users/${currentUser.uid}`));
-        const curUserData = userRecord.val(); 
-        const name = curUserData.userName;
+        currentUserName = await fetchCurrentUserName(currentUser)
         
         await signOut(auth);
-        alert(`${name} logged out.`);
+        window.location.replace("login.html?msg=loggedout");
+
         
-        checkUserAuthStatus();
+        await checkUserAuthStatus();
 
     } catch (error){
-        console.error(error);
+        // console.error(error);
     }
     
 });
 
 const toggleTaskDoneOnDB = async (taskID, doneStatus) => {
     try {
-        const doneTask = doc(taskDB,"toDoList", currentTDListID, "tasks", taskID);
+        const doneTask = doc(toDoListsDB, currentTDListID, "tasks", taskID);
         await updateDoc(doneTask, {done: doneStatus, dateUpdated: new Date().toISOString()});
         return {id: taskID, done:doneStatus};
     } catch (err) {
-        console.error("Failed to update done status:", err);
+        // console.error("Failed to update done status:", err);
     }
 };
 
 function setUserAvatar(userName){
-    userAvatarBtn.textContent = userName.charAt(0).toUpperCase();
+    userAvatarBox.textContent = `${userName}'s To-Do List`;
 }
 
 sorterSelect.addEventListener("change", () => {
@@ -155,14 +174,14 @@ sorterSelect.addEventListener("change", () => {
 });
 
 function sortTasksBy(criteria) {
-    console.log("Sorting tasks by:", criteria);
+    // console.log("Sorting tasks by:", criteria);
     const taskContainer = document.querySelector(".task-item-container");
     const tasks = Array.from(taskContainer.children);
 
-    console.log("Before sort:");
-    tasks.forEach(task => {
-        console.log(`Task: ${task.dataset.taskText}, Date Created: ${task.dataset.dateCreated}, Due: ${task.dataset.dueDate} ${task.dataset.dueTime}, Priority: ${task.dataset.priority}`);
-    });
+    // console.log("Before sort:");
+    // tasks.forEach(task => {
+    //     console.log(`Task: ${task.dataset.taskText}, Date Created: ${task.dataset.dateCreated}, Due: ${task.dataset.dueDate} ${task.dataset.dueTime}, Priority: ${task.dataset.priority}`);
+    // });
 
     tasks.sort((a, b) => {
         if (criteria === "date added") {
@@ -187,14 +206,14 @@ function sortTasksBy(criteria) {
     taskContainer.innerHTML = "";
     tasks.forEach(task => taskContainer.appendChild(task));
 
-    console.log("After sort:");
-    tasks.forEach(task => {
-        console.log(`Task: ${task.dataset.taskText}, Date Created: ${task.dataset.dateCreated}, Due: ${task.dataset.dueDate} ${task.dataset.dueTime}, Priority: ${task.dataset.priority}`);
-    });
+    // console.log("After sort:");
+    // tasks.forEach(task => {
+    //     console.log(`Task: ${task.dataset.taskText}, Date Created: ${task.dataset.dateCreated}, Due: ${task.dataset.dueDate} ${task.dataset.dueTime}, Priority: ${task.dataset.priority}`);
+    // });
 }
 
 function updateAddButton () {
-    console.log("Checking input:", addTaskTextInput.value);
+    // console.log("Checking input:", addTaskTextInput.value);
     if (addTaskTextInput.value.trim() !== "" && userTasks){
         addBtn.disabled = false;
         addBtn.classList.add("enabled");
@@ -276,7 +295,7 @@ function processUserAddTask(){
                 dateUpdated: new Date().toISOString()
             }
 
-            console.log("Task to save: ", taskToAdd);
+            // console.log("Task to save: ", taskToAdd);
             const taskDocToAdd = await addDoc(userTasks, taskToAdd);
 
             taskForm.reset();
@@ -286,7 +305,7 @@ function processUserAddTask(){
             addTaskDueTimeLabel.style.display = "none";
 
         } catch(err){
-            console.error("Error adding task:", err);
+            // console.error("Error adding task:", err);
             return null;
         }
     });
@@ -426,35 +445,35 @@ function addTaskToUI(taskToAdd){
     //FOR DELETE BUTTON
     let taskToDelete = null;
     deleteBtn.addEventListener("click", () =>{  
-        console.log("Delete button clicked for task:", taskDiv.dataset.id);      
+        // console.log("Delete button clicked for task:", taskDiv.dataset.id);      
         deleteConfirmationModal.style.display = "flex";
         taskToDelete = taskDiv;
     });
 
     confirmDelBtn.addEventListener("click", async () => {
-        console.log("Confirm delete clicked");
+        // console.log("Confirm delete clicked");
         if (taskToDelete){
-            const taskDocToDelete = doc(taskDB, "toDoList", currentTDListID, "tasks", taskToDelete.dataset.id);
+            const taskDocToDelete = doc(toDoListsDB, currentTDListID, "tasks", taskToDelete.dataset.id);
 
             try{
                 await deleteDoc(taskDocToDelete);
-                console.log("Removing task from DOM");
+                // console.log("Removing task from DOM");
                 taskToDelete.remove();
                 sortTasksBy(currentSort);
                 toggleEmptyModal();
             }  catch (err) {
-                console.log("Backend deletion failed, not removing from DOM");
+                // console.log("Backend deletion failed, not removing from DOM");
             }
 
         } else {
-        console.log("No task selected for deletion");
+        // console.log("No task selected for deletion");
     }
         deleteConfirmationModal.style.display = "none";
         taskToDelete = null;
     });
 
     cancelDelBtn.addEventListener("click", () => {
-        console.log("Cancel delete clicked");
+        // console.log("Cancel delete clicked");
         deleteConfirmationModal.style.display = "none";
         taskToDelete = null;
     });
@@ -509,12 +528,12 @@ function addTaskToUI(taskToAdd){
             dateUpdated: new Date().toISOString()
         };
 
-        const taskDocToEdit = doc(taskDB, "toDoList", currentTDListID, "tasks", taskToEdit.dataset.id);
+        const taskDocToEdit = doc(toDoListsDB, currentTDListID, "tasks", taskToEdit.dataset.id);
         
         try {
             await updateDoc(taskDocToEdit, updatedTaskInfo);
         } catch (err){
-            console.log("Backend edit failed, not editing from DOM");
+            // console.log("Backend edit failed, not editing from DOM");
         }
         
         // Update dataset

@@ -1,7 +1,7 @@
 * {
     margin: 0;
     box-sizing: border-box;
-    /* border: 1px solid black; */
+    /* border:solid red 1px; */
 }
 
 body {
@@ -71,22 +71,43 @@ header h1 {
 }
 
 /* avatar circle (no arbitrary large margin-left) */
-.user-profile {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #fff;
-  color: rgb(226,33,97);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 30px;
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  margin-left: 75rem;
+.avatar-full {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 200px;           /* max width of the box */
+    padding: 6px 12px;
+    background-color: #fff;
+    color: rgb(226,33,97);
+    font-weight: 600;
+    font-size: clamp(12px, 2vw, 16px); /* font shrinks for long names */
+    border: 1px solid rgb(226,33,97);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;    /* optional: shows ... if extremely long */
+    text-align: center;
+    cursor: default;
+    margin-left: 1000px;
 }
+
+#logout-button {
+    padding: 0.4rem 1rem;
+    border: 2px solid white;
+    background: transparent;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s;
+}
+
+#logout-button:hover {
+    background: white;
+    color: rgb(226, 33, 97);
+}
+
 
 /* small vertical control buttons next to avatar */
 .header-controls {
@@ -156,21 +177,52 @@ main{
 }
 
 #add-button {
-    border : 2px solid black;   
+    height: 36px;
+    padding: 6px 12px;
+    border: 1px solid  rgb(226, 33, 97);
+    border-radius: 6px;
+    background: #fff0f5;
+    color: #666;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    border-radius: 5px;
-    display: flex;
-    width: 60px;
-    background: rgb(218, 199, 205);
-    color: black;
     cursor: not-allowed;
-    transition: background 0.2s;
+    transition: background 0.15s, box-shadow 0.15s, transform 0.12s;
 }
 
-#add-button.enabled{
-    background:  rgb(226, 33, 97);
-    cursor: pointer;
+#add-button.enabled {
+    background: rgb(226, 33, 97);
     color: white;
+    cursor: pointer;
+    border-color: rgb(226, 33, 97);
+    box-shadow: 0 6px 18px rgba(226,33,97,0.14);
+    transform: translateY(-1px);
+}
+
+#add-button.enabled:hover {
+    background: rgb(206, 13, 77);
+    box-shadow: 0 8px 22px rgba(206,13,77,0.18);
+}
+
+#add-button:disabled {
+    opacity: 0.45;
+    border: 1px solid  rgb(226, 33, 97);
+    cursor: not-allowed;
+    filter: grayscale(80%) contrast(0.85) brightness(0.95);
+    box-shadow: none;
+    transform: none;
+}
+
+#add-button:disabled:hover {
+    transform: none;
+    box-shadow: none;
+    filter: grayscale(90%) contrast(0.8) brightness(0.9);
+}
+
+
+#add-button:not(.enabled):hover {
+    cursor: not-allowed;
 }
 
 #main-content-container {
@@ -188,21 +240,41 @@ main{
     margin: 30px;
 }
 
-#task-priority{
-    /* border: 2px solid yellow; */
+#task-priority {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-#priority-input{
-    font-weight: bold;
+#priority-input {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
 }
 
-#priority-select{
-    width: 75px;
-    height: 20px;
+#priority-select {
+    height: 36px;
+    padding: 6px 10px;
+    width: 100px;
     text-align: center;
+    border: 1px solid #f0d0e0;
+    border-radius: 6px;
+    background: #fff0f5;
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#priority-select:hover {
+    border-color: rgb(226, 33, 97);
+    box-shadow: 0 2px 6px rgba(226, 33, 97, 0.1);
+}
+
+#priority-select:focus {
+    outline: none;
+    border-color: rgb(226, 33, 97);
+    box-shadow: 0 0 0 3px rgba(226, 33, 97, 0.1);
 }
 
 #task-date-label{
@@ -267,26 +339,75 @@ main{
     margin-bottom: 4px;
 }
 
-#task-sorter{
-    /* border: 2px solid black; */
+#identifier-sorter-row {
     display: flex;
     align-items: center;
-    padding: 5px;
-    width: 220px;
-    align-self: flex-end ;
+    width: 100%;
+    gap: 20px;
+    justify-content: space-between;
+    border-bottom: 2px solid #f0d0e0;
 }
 
-#task-sorter-input{
-    font-weight: bold;
-    width: 120px;
-    height: 28px;
-    text-align: center;
+#to-do-list-identifier {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    gap: 10px;
+
 }
 
-#sorter-select{
-    height: 20px;
+#to-do-list-identifier p {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: rgb(226, 33, 97);
+    letter-spacing: 0.5px;
+}
+
+#task-sorter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2px;
+    gap: 10px;
+    /* nudge the sorter slightly left from the right edge */
+    margin-right: 20px;
+}
+
+#task-sorter-input {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+    width: auto;
+    height: auto;
+    text-align: left;
+}
+
+#sorter-select {
+    height: 36px;
+    padding: 6px 10px;
     text-align: center;
-    width: 100px;
+    width: 140px;
+    border: 1px solid #f0d0e0;
+    border-radius: 6px;
+    background: #fff0f5;
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#sorter-select:hover {
+    border-color: rgb(226, 33, 97);
+    box-shadow: 0 2px 6px rgba(226, 33, 97, 0.1);
+}
+
+#sorter-select:focus {
+    outline: none;
+    border-color: rgb(226, 33, 97);
+    box-shadow: 0 0 0 3px rgba(226, 33, 97, 0.1);
 }
 
 .task-list{
@@ -595,4 +716,59 @@ h3{
     
     left: 6px;
     top: 2px;
+}
+
+/* Hover/interactive styles for action buttons */
+.edit-btn {
+    background: #4caf50;
+    color: #fff;
+    border: none;
+}
+.edit-btn:hover {
+    background: #3b8b45;
+    box-shadow: 0 4px 12px rgba(59,139,69,0.18);
+    transform: translateY(-1px);
+}
+
+.delete-btn {
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+}
+.delete-btn:hover {
+    background: #e03b3b;
+    box-shadow: 0 4px 12px rgba(224,59,59,0.18);
+    transform: translateY(-1px);
+}
+
+/* Modal confirm/cancel are using .delete-btn and .cancel-btn / #emodal-save-edit-button */
+.cancel-btn, #emodal-cancel-button {
+    background: #e9e9e9;
+    color: #333;
+    border: none;
+}
+.cancel-btn:hover, #emodal-cancel-button:hover {
+    background: #d6d6d6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+#confirm-delete-btn {
+    /* ensure confirm uses delete visual */
+}
+
+/* Save/edit button hover */
+#emodal-save-edit-button {
+    background: #4caf50;
+    color: white;
+    border: none;
+}
+#emodal-save-edit-button:hover {
+    background: #3b8b45;
+    box-shadow: 0 4px 12px rgba(59,139,69,0.18);
+}
+
+/* Defensive: ensure disabled buttons don't show hover effects */
+button:disabled, .button[disabled] {
+    pointer-events: none;
+    opacity: 0.5;
 }

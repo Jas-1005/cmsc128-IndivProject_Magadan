@@ -22,11 +22,11 @@
         
         <form id="login-form">
             <div id="login-email-container">
-                <input type="email" id="login-email-input" placeholder="Email" required>
+                <input type="email" id="login-email-input" placeholder="Email" autocomplete="username" required>
             </div>
             
             <div id="password-container">
-                <input type="password" id="login-password-input" name = "password" placeholder="Password" maxlength="10" required>
+                <input type="password" id="login-password-input" name = "password" placeholder="Password" maxlength="10" autocomplete="current-password" required>
                 <div class="toggle-password"><i class="fa-solid fa-eye"></i></div>
             </div>
             <div id="login-btn-div"> 
@@ -47,15 +47,15 @@
         <form id="signup-form">
             <div id="firebase-auth-error-message-signup" class="error-message"></div> <!-- ADD THIS -->
             <div id="signup-name-container">
-                <input type="text" id="signup-name-input" placeholder="Name">
+                <input type="text" id="signup-name-input" placeholder="Username" autocomplete="name" required>
             </div>
             
             <div id="signup-email-container">
-                <input type="email" id="signup-email-input" placeholder="Email" required>
+                <input type="email" id="signup-email-input" placeholder="Email" autocomplete="email" required>
             </div>
             
             <div id="password-container">
-                <input type="password" id="signup-password-input" name = "password" placeholder="Password" maxlength="10" required>
+                <input type="password" id="signup-password-input" name = "password" placeholder="Password" maxlength="10"  autocomplete="new-password" required>
                 <div class="toggle-password"><i class="fa-solid fa-eye"></i></div>
             </div>
             <div id="signup-btn-div"> 
@@ -67,63 +67,11 @@
             </div>
         </form>
     </div> 
-    <div id="forget-password-container">
-        <div id="forget-password-form-label">
-            <h3>ACCOUNT RECOVERY</h3>
-        </div>
-        
-        <form id="forget-password-form">
-            <div id="firebase-auth-error-message-forgot" class="error-message"></div> <!-- ADD THIS -->
-            <div id="firebase-auth-success-message-forgot" class="success-message"></div> <!-- ADD THIS -->
-            <div id="forget-email-container">
-                <input type="text" id="forget-email-input" placeholder="Enter registered email" required>
-            </div>
-            <div id="receive-otp-btn-div"> 
-                <button id="receive-otp-btn">RECEIVE EMAIL RECOVERY</button>
-            </div>
-            <div id="forget-pw-login-link">
-                <div id="go-to-login-label"> Remembered your password? </div>
-                <div id="forget-pw-go-to-login" class="link"> Log in here </div>
-            </div>
-        </form>
-    </div> 
-    <div id = "password-reset-container">
-        <form id="password-reset-form">
-            <input type="password" id="current-password-input" name = "password" placeholder="Enter current password" maxlength="10" required>
-            <input type="password" id="new-password-input" name = "password" placeholder="Enter new password" maxlength="10" required>
-            <button type= "button" id="save-password-changes-btn">SAVE NEW PASSWORD</button>
-            <button type= "button" id="cancel-password-changes-btn">CANCEL CHANGES</button>
-        </form>
-    </div>    
-    <div id="edit-user-profile-form-container">
-        <div id="edit-user-profile-form-label">
-            <h3>USER PROFILE</h3>
-        </div>
-        <form id="edit-user-form">
-            <div id="edit-name-container">
-                <label>Username: </label>
-                <input type="text" id="edit-name-input">
-            </div>
-            
-            <div id="edit-email-container">
-                <label>Email: </label>
-                <input type="text" id="edit-email-input">
-            </div>
-            <!-- <div id="edit-password-container">
-                <input type="text" id="edit-password-input" placeholder="Edit password">
-            </div> -->
-            <div id = "user-profile-actions">
-                <button type= "button" id="save-changes-btn">SAVE CHANGES</button>
-                <button type= "button" id="cancel-changes-btn">CANCEL CHANGES</button>
-            </div>
-        </form>
-        <div id="logout-btn-div">
-            <button type="button" id="logout-btn">LOG OUT</button>
-        </div>
     </div> 
 </main>  
     <script type="module" src="login.js"></script>
 </body>
+<div id="toast" class="toast"></div>
 </html>
 
 
