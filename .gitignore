@@ -69,4 +69,4 @@ node_modules/
 .dataconnect
 
 node_modules/
-/public/firebase.js
+/docs/firebase.js
