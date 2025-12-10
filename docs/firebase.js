@@ -5,7 +5,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/12.4.0/firebase
 
 const firebaseConfig = {
            
-        };
+    };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
